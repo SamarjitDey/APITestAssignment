@@ -73,4 +73,4 @@ For the versions available, see the [tags on this repository](https://github.com
 
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
+* **Samarjit Dey** - *Complete Framework*
