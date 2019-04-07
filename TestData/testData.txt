@@ -1,0 +1,16 @@
+/** 
+*This test data sheet acts as a data source for the test case in APITest.groovy framework
+*The values have been taken from assignment for creating automation test with the given acceptance criteria data.
+*Please note that the data combination below (except the API at the top) doesn't need to 
+*follow the sequence and can be altered to add or delete more data. The program can handle 
+*any number of inputs that can be validated with respect to the API, except for the input 
+*which has two combinations with parent.child node relationship. 
+*For such inputs, one has to follow the pattern as shown below - 
+*[parent.child equals "some value" and parent.child conteins "some value" or vice-versa]
+*/  
+
+####Data####
+API = https://api.tmsandbox.co.nz/v1/Categories/6327/Details.json?catalogue=false
+Name = "Carbon credits"
+CanRelist = true
+Promotions.Name = "Gallery" and Promotions.Description contains "2x larger image"
