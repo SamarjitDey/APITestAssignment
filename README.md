@@ -23,7 +23,7 @@ These instructions will get you a copy of the project on the sample API automati
 * Select Start -> Computer -> System Properties -> Advanced system settings -> Environment Variables -> System variables -> Click on New -> Enter JAVA_HOME in Variable_name -> Enter path (C:\Program Files (x86)\Java\jdk1.8.0_201) for jdk1.8 in Variable_value -> Ok
 * download groovy-2.5.6 (zip file) from https://dl.bintray.com/groovy/maven/apache-groovy-sdk-2.5.6.zip and place it in some location
 * copy the path for groovy-2.5.6 from local machine and navigate to Start -> Computer -> System Properties -> Advanced system settings -> Environment Variables -> System variables -> Click on New -> Enter GROOVY_HOME in Variable_name -> Enter copied path for groovy-2.5.6 in Variable_value -> Ok
-* In system environment variables, prepend %GROOVY_HOME%\bin;%JAVA_HOME%\bin in the PATH variable
+* In system environment variables, prepend %GROOVY_HOME%\bin;%JAVA_HOME%\bin in the PATH variable (in Windows 7). If Windows 10, add two lines %GROOVY_HOME%\bin and %JAVA_HOME%\bin in PATH variable
 * run "groovy -v" from command line and check if "Groovy Version: 2.5.6 JVM: 1.8.0_201 Vendor: Oracle Corporation OS: Windows 7 or 10" is reported 
 * Create profile in github repository using the URL: https://github.com/join
 * Open the link - and download a copy of the project in your local machine
@@ -31,8 +31,8 @@ These instructions will get you a copy of the project on the sample API automati
 
 ## Running the tests
 
-* Navigate to the path where APITest has been downloaded.
-* Go to address bar and type 'cmd' and command prompt should launch
+* Navigate to the path where this APITest framework has been downloaded.
+* Go to address bar in that folder and type 'cmd' and command prompt should launch
 * Type "groovy APITest.groovy" in the command line and hit enter
 * Test should run and report should automatically generate and launch
 
@@ -66,6 +66,7 @@ sourceValA = sourceValA.matches("\".*\"") ? sourceValA.replaceAll("\"", "") : so
 ## Built With
 
 * [Groovy Console](https://dl.bintray.com/groovy/maven/apache-groovy-sdk-2.5.6.zip)
+* Notepad++
 
 ## Versioning
 
