@@ -17,9 +17,9 @@ These instructions will get you a copy of the project on the sample API automati
 
 ### Prerequisites
 
-* Local machine (32 bit) running in Windows 7 or 10
-* run "java -version" from command line and check java version. it should be - jdk 1.8. 
-* If jdk 1.8 is not installed, download it from https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html and run it to installed
+* Local machine running in Windows 7 or 10
+* run "java -version" from command line and check java version. it should be - jdk 1.8 32-bit. 
+* If jdk 1.8 is not installed, download it (32-bit) from https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html and run it to installed
 * Select Start -> Computer -> System Properties -> Advanced system settings -> Environment Variables -> System variables -> Click on New -> Enter JAVA_HOME in Variable_name -> Enter path (C:\Program Files (x86)\Java\jdk1.8.0_201) for jdk1.8 in Variable_value -> Ok
 * download groovy-2.5.6 (zip file) from https://dl.bintray.com/groovy/maven/apache-groovy-sdk-2.5.6.zip and place it in some location
 * copy the path for groovy-2.5.6 from local machine and navigate to Start -> Computer -> System Properties -> Advanced system settings -> Environment Variables -> System variables -> Click on New -> Enter GROOVY_HOME in Variable_name -> Enter copied path for groovy-2.5.6 in Variable_value -> Ok

@@ -21,18 +21,18 @@ import groovy.json.*
 import java.io.File
 import java.awt.Desktop
 
-//returns default location of the framework
+// Returns default location of the framework
 def folderLocation = System.getProperty("user.dir");
 
 try{
-    //get test Data contents 
+    // Get test Data contents 
     def dataSource = new File("$folderLocation/TestData/testData.txt").getText('UTF-8')
     def getURI, getResponseParsed
     
     def listOfTestData = [:]
     def htmlRows= []
     
-    //traverse each lines inside dataSource 
+    // Traverse each lines inside dataSource 
     dataSource.eachLine{
         if(it.contains("=") && !it.contains("contains")){
             if(it.contains("API")){
@@ -48,9 +48,10 @@ try{
                     System.exit(0)
                 }
             }else
-            listOfTestData.put("${it.split("=")[0].trim()}","${it.split("=")[1].trim()}") // extracts parent node as key and data as value and save in map
+            listOfTestData.put("${it.split("=")[0].trim()}","${it.split("=")[1].trim()}") // Extracts parent node as key and data as value and save in map
        }else if(it.contains("contains")){
-            listOfTestData.put("${it.split("and")[0].trim()}","${it.split("and")[1].trim()}") // extracts parent.child node as key and data as value and save in map 
+            // Extracts parent.child node as key and data as value and save in map 
+			listOfTestData.put("${it.split("and")[0].trim()}","${it.split("and")[1].trim()}") 
         }
     }
     
@@ -61,24 +62,24 @@ try{
     
     if(!listOfTestData.isEmpty()){
         listOfTestData.each{ item->
-            validateNodes(item, getResponseParsed, htmlRows) //validation of each node extracted from listOfTestData
+            validateNodes(item, getResponseParsed, htmlRows) // Validation of each node extracted from listOfTestData
         }
     }else if(listOfTestData.isEmpty()){
-        println "Test Data not available. Exiting program..." //Exiting if listOfTestData found empty
+        println "Test Data not available. Exiting program..." // Exiting if listOfTestData found empty
         System.exit(0)
     }
     
     if(!htmlRows.isEmpty()){
-        createReport(htmlRows, folderLocation, getURI) //generate test report for the acceptance criteria and save it in report folder
+        createReport(htmlRows, folderLocation, getURI) // Generate test report for the acceptance criteria and save it in report folder
     }else{
         println "Cannot generate Report. Please see the results in the console"
     }
 }catch(Exception e){
-    println "Unsuccessful Test Run: $e. Exiting program..." //Any unforseen event, should exit the program
+    println "Unsuccessful Test Run: $e. Exiting program..." // Any unforseen event, should exit the program
     System.exit(0)
 }
 finally{
-    println "Test Execution Complete..." //On successful test run completion
+    println "Test Execution Complete..." // On successful test run completion
 }
 
 /** Method to hit API and parse response only on (responseCode = 200), else Bad request
@@ -104,10 +105,10 @@ def getApiResponse(def URI){
 def validateNodes(def item, def getResponseParsed, def htmlRows){
 
     try{
-        def targetKey, sourceVal, targetVal //variables for parent node validations
-        def targetKeyA, targetKeyB, sourceValA, sourceValB, targetValA, targetValB, flagA, flagB //variables for parent.child node validations
+        def targetKey, sourceVal, targetVal // Variables for parent node validations
+        def targetKeyA, targetKeyB, sourceValA, sourceValB, targetValA, targetValB, flagA, flagB // Variables for parent.child node validations
         
-        //to extract key and values for from parent.child key extracted above
+        // To extract key and values for from parent.child key extracted above
         if(item.key.toString().contains(".")){
             if(item.key.contains("=")){
                 targetKeyA = item.key.split("=")[0].trim()
@@ -121,7 +122,7 @@ def validateNodes(def item, def getResponseParsed, def htmlRows){
         }else
             targetKey = item.key
               
-        //to extract key and values for from parent.child value extracted above
+        // To extract key and values for from parent.child value extracted above
         if(item.value.toString().contains(".")){
             if(item.value.contains("=")){
                 targetKeyB = item.value.split("=")[0].trim()
@@ -135,9 +136,9 @@ def validateNodes(def item, def getResponseParsed, def htmlRows){
         }else
             sourceVal = item.value
        
-        //validation block for parent.child node acceptance criteria
+        // Validation block for parent.child node acceptance criteria
         if(flagA == 1 && flagB == 1){
-            sourceValA = sourceValA.matches("\".*\"") ? sourceValA.replaceAll("\"", "") : sourceValA //replace any start-end quotes with blank
+            sourceValA = sourceValA.matches("\".*\"") ? sourceValA.replaceAll("\"", "") : sourceValA // Replace any start-end quotes with blank
             sourceValB = sourceValB.matches("\".*\"") ? sourceValB.replaceAll("\"", "") : sourceValB
 
             /**since acceptance criteia validation has "and" clause. Therefore, it checks if both keys have same parent
@@ -146,17 +147,17 @@ def validateNodes(def item, def getResponseParsed, def htmlRows){
             */
             getResponseParsed.findAll{(targetKeyA.split("\\.")[0]) == (targetKeyB.split("\\.")[0])}.(targetKeyA.split("\\.")[0]).each{ node->
 
-                //Checks if child key exists in parent instance
-                //If not found, report node not found error and exit the program
+                // Checks if child key exists in parent instance
+                // If not found, report node not found error and exit the program
                 targetValA = node.containsKey(targetKeyA.split("\\.")[1]) ? node.(targetKeyA.split("\\.")[1]) : 2/0
                 targetValB = node.containsKey(targetKeyB.split("\\.")[1]) ? node.(targetKeyB.split("\\.")[1]) : 2/0
 
-                //Check if the child value matches/contains with source value in test data
+                // Check if the child value matches/contains with source value in test data
                 if(targetValA.toString() == sourceValA.toString() && targetValB.toString().contains(sourceValB.toString())){
                     println "Passed: $targetKeyA equals to $sourceValA and $targetKeyB contains $sourceValB"
                     
-                    htmlRows.add("$targetKeyA-$sourceValA-$targetValA-Passed") //logs each key, value and pass to be reported in html report
-                    htmlRows.add("${targetKeyB} (contains)-$sourceValB-$targetValB-Passed") //logs each key, value and pass to be reported in html report
+                    htmlRows.add("$targetKeyA-$sourceValA-$targetValA-Passed") // Logs each key, value and pass to be reported in html report
+                    htmlRows.add("${targetKeyB} (contains)-$sourceValB-$targetValB-Passed") // Logs each key, value and pass to be reported in html report
                 }else if(targetValA.toString().contains(sourceValA.toString()) && targetValB.toString() == sourceValB.toString()){
                     println "Passed: $targetKeyA contains $sourceValA and $targetKeyB equals to $sourceValB"
                    
@@ -165,8 +166,8 @@ def validateNodes(def item, def getResponseParsed, def htmlRows){
                 }else if(targetValA.toString() == sourceValA.toString() && !(targetValB.toString().contains(sourceValB.toString()))){
                     println "Failed: $targetKeyA equals to $sourceValA but $targetKeyB does not contains $sourceValB"
                    
-                    htmlRows.add("$targetKeyA-$sourceValA-$targetValA-Failed") //logs each key, value and fail to be reported in html report
-                    htmlRows.add("${targetKeyB} (contains)-$sourceValB-$targetValB-Failed") //logs each key, value and fail to be reported in html report
+                    htmlRows.add("$targetKeyA-$sourceValA-$targetValA-Failed") // Logs each key, value and fail to be reported in html report
+                    htmlRows.add("${targetKeyB} (contains)-$sourceValB-$targetValB-Failed") // Logs each key, value and fail to be reported in html report
                 }else if(targetValA.toString().contains(sourceValA.toString()) && targetValB.toString() != sourceValB.toString()){
                     println "Passed: $targetKeyA contains $sourceValA but $targetKeyB does not equals to $sourceValB"
                     
@@ -177,31 +178,31 @@ def validateNodes(def item, def getResponseParsed, def htmlRows){
         }
         
         else{
-            sourceVal = item.value.matches("\".*\"") ? item.value.replaceAll("\"", "") : item.value //replace any start-end quotes with blank
+            sourceVal = item.value.matches("\".*\"") ? item.value.replaceAll("\"", "") : item.value // Replace any start-end quotes with blank
             
-            //Checks if child key exists in parent instance
-            //If not found, report node not found error and exit the program
+            // Checks if child key exists in parent instance
+            // If not found, report node not found error and exit the program
             targetVal = getResponseParsed.containsKey(targetKey.toString()) ? jsonParse(targetKey, getResponseParsed) : 2/0
                         
             if(targetVal instanceof List){
-                targetVal = targetVal[0] //if jsonParse return map, take value inside it
+                targetVal = targetVal[0] // If jsonParse return map, take value inside it
             }
             if(sourceVal instanceof List){
                 sourceVal = sourceVal[0]
             }
         
 
-            //Check if the child value matches/contains with source value in test data        
+            // Check if the child value matches/contains with source value in test data        
             if(sourceVal.toString() == targetVal.toString()){
                 println "Passed: $targetKey has value as $sourceVal"
-                htmlRows.add("$targetKey-$sourceVal-$targetVal-Passed") //logs each key, value and pass to be reported in html report
+                htmlRows.add("$targetKey-$sourceVal-$targetVal-Passed") // Logs each key, value and pass to be reported in html report
             }else{
                 println "Failed: $targetKey does not has value as $sourceVal"
-                htmlRows.add("$targetKey-$sourceVal-$targetVal-Failed") //logs each key, value and fail to be reported in html report
+                htmlRows.add("$targetKey-$sourceVal-$targetVal-Failed") // Logs each key, value and fail to be reported in html report
             }
         }
     }catch(ArithmeticException e){
-            println "Exception: Node doesn't exists. Exiting program..." //Report if node does not exists and exit the program
+            println "Exception: Node doesn't exists. Exiting program..." // Report if node does not exists and exit the program
             System.exit(0)
         }
      catch(Exception e){
@@ -218,11 +219,11 @@ def createReport(def htmlRows, def folderLocation, def getURI){
     println "\n\nGenerating Report Html file....."
     htmlReport = new File("$folderLocation/Reports/Report.html") //Create html report file
     if(htmlReport.exists()){
-       htmlReport.delete() //Delete if file already exists in folder location
+       htmlReport.delete() // Delete if file already exists in folder location
     }
-    StringBuilder buffer = new StringBuilder() //To create script for HTML table 
+    StringBuilder buffer = new StringBuilder() // To create script for HTML table 
     
-    //HTML script for the static start part
+    // HTML script for the static start part
     def htmlStart = '''<!DOCTYPE html>
                         <!DOCTYPE HTML PUBLIC 
                         http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd>
@@ -257,9 +258,9 @@ def createReport(def htmlRows, def folderLocation, def getURI){
                             
                           </tr>''' 
 
-    buffer.append htmlStart //append static part in buffer string
+    buffer.append htmlStart // Append static part in buffer string
 
-    //HTML script for the static end part
+    // HTML script for the static end part
     def  htmlEnd = '''
     </table>
     <table align="center">
@@ -270,18 +271,18 @@ def createReport(def htmlRows, def folderLocation, def getURI){
     </body>
     </html>'''
 
-    def counter = 1 //Generates serial number
+    def counter = 1 // Generates serial number
     htmlRows.each{
-        buffer.append "<tr> <td> $counter </td>" //appending html table rows into string
+        buffer.append "<tr> <td> $counter </td>" // Aappending html table rows into string
         it.split("-").each{ val->
-            buffer.append "<td> $val </td>" //appending html table rows into string
+            buffer.append "<td> $val </td>" // Appending html table rows into string
         }
         buffer.append "</tr>"
         counter++
     } 
-    buffer.append htmlEnd //append html static end part in buffer string
-    htmlReport.append buffer //writing string buffer into html file
+    buffer.append htmlEnd // Append html static end part in buffer string
+    htmlReport.append buffer // Writing string buffer into html file
     sleep(2000)  
     println "Opening Report Html file....."
-    Desktop.getDesktop().browse(htmlReport.toURI()); //Open html file with default browser of the system
+    Desktop.getDesktop().browse(htmlReport.toURI()); // Open html file with default browser of the system
 }
